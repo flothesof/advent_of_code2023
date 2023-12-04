@@ -62,22 +62,23 @@ for line_ind, line in enumerate(prepared_input):
 # 531966 not right
 
 print(f"part 1: sum of part numbers {part_number_sum}")
-with open('numbers.txt', 'w') as f:
-    f.writelines("\n".join(all_numbers))
 
 ###############################################################################
 # part 2: gears
 
 inp = open('data/input03').read()
+
+
 # inp = test_input
 
 def val_and_coords(array, line, row):
     return array[line][row], (line, row)
 
+
 prepared_input = prepare_input(inp)
 part_number_sum = 0
 all_numbers = []
-star_connections = {}
+stars = {}
 for line_ind, line in enumerate(prepared_input):
     for match in re.finditer(r'\d+', line.strip()):
         number = match.group()
@@ -94,7 +95,7 @@ for line_ind, line in enumerate(prepared_input):
                                  val_and_coords(prepared_input, line_ind, index + 1),
                                  val_and_coords(prepared_input, line_ind + 1, index + 1)])
 
-            neigbors.extend([val_and_coords(prepared_input,line_ind - 1,index),
+            neigbors.extend([val_and_coords(prepared_input, line_ind - 1, index),
                              val_and_coords(prepared_input, line_ind + 1, index)])
             index += 1
         diff_set = set([n[0] for n in neigbors]).difference(set('.'))
@@ -106,11 +107,12 @@ for line_ind, line in enumerate(prepared_input):
                 star_neighbors = [n for n in neigbors if n[0] == '*']
                 assert len(star_neighbors) == 1
                 star_coords = star_neighbors[0][1]
-                if star_coords in star_connections:
-                    star_connections[star_coords].append(int(number))
+                if star_coords in stars:
+                    stars[star_coords].append(int(number))
                 else:
-                    star_connections[star_coords] = [int(number)]
+                    stars[star_coords] = [int(number)]
 
 prod = lambda l: l[0] * l[1]
-print(sum([prod(star_connections[sc]) for sc in star_connections if len(star_connections[sc]) == 2]))
+print("part 2: ", sum([prod(stars[s]) for s in stars if len(stars[s]) == 2]))
+
 ###############################################################################
