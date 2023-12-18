@@ -8,9 +8,8 @@ def rotate(lines):
     return out
 
 
-rotate(["abc", "def"])
+# rotate(["abc", "def"])
 
-###############################################################################
 test_input = """...#......
 .......#..
 #.........
@@ -23,7 +22,7 @@ test_input = """...#......
 #...#....."""
 
 # inp = test_input
-inp = open('data\input11').read()
+inp = open('data/input11').read()
 
 lines = inp.split('\n')
 
@@ -50,7 +49,6 @@ for line in lines:
 
 processed_lines = rotate(processed_lines)
 
-
 # indexing galaxies
 galaxies = set()
 for i, line in enumerate(processed_lines):
@@ -69,5 +67,59 @@ for i, g1 in enumerate(galaxies):
                 dists[(g1 + g2)] = abs(a - c) + abs(b - d)
 
 print('part1: ', sum(dists.values()))
+
+###############################################################################
+# part 2:
+# inp = test_input
+inp = open('data/input11').read()
+
+lines = inp.split('\n')
+
+# add missing lines
+missing_lines = []
+for i, line in enumerate(lines):
+    if line.find('#') < 0:
+        missing_lines.append(i)
+
+
+def cols(lines):
+    N = len(lines)
+    M = len(lines[0])
+    for j in range(M):
+        l = ""
+        for i in range(N):
+            l += lines[i][j]
+        yield l
+
+
+missing_cols = []
+for j, col in enumerate(cols(lines)):
+    if col.find('#') < 0:
+        missing_cols.append(j)
+
+
+def remap(i, j, multiplier=1000000):
+    return (i + sum(multiplier - 1 for ii in missing_lines if ii < i),
+            j + sum(multiplier - 1 for jj in missing_cols if jj < j))
+
+
+# indexing galaxies
+galaxies = set()
+for i, line in enumerate(lines):
+    for j, val in enumerate(line):
+        if val == '#':
+            galaxies.add(remap(i, j))
+
+# computing distances
+dists = {}
+for i, g1 in enumerate(galaxies):
+    for j, g2 in enumerate(galaxies):
+        if i != j:
+            a, b = g1
+            c, d = g2
+            if (g2 + g1) not in dists:
+                dists[(g1 + g2)] = abs(a - c) + abs(b - d)
+
+print('part2: ', sum(dists.values()))
 
 ###############################################################################
